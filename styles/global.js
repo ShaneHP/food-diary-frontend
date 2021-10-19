@@ -21,6 +21,10 @@ export const globalStyles = StyleSheet.create({
         padding: 10,
         fontSize: 18,
         borderRadius: 6,
+        color: 'black',
+    },
+    inputButton: {
+        marginVertical: 5,
     },
     errorText: {
         color: 'crimson',

@@ -10,41 +10,49 @@ const EntryDetails = ({ route }) => {
         <View style={globalStyles.container}>
             <Card>
                 <Text>
+                    <Text style={globalStyles.boldText}>Date:</Text>{' '}
+                    {diaryEntry.date}
+                </Text>
+                <Text>
+                    <Text style={globalStyles.boldText}>Time:</Text>{' '}
+                    {diaryEntry.time}
+                </Text>
+                <Text>
                     <Text style={globalStyles.boldText}>Meal Type:</Text>{' '}
                     {diaryEntry.mealType}
                 </Text>
                 <Text>
-                    <Text style={globalStyles.boldText}>Food Item:</Text>
+                    <Text style={globalStyles.boldText}>Food Item: </Text>
                     {diaryEntry.foodItems.name}
                 </Text>
                 <Text>
-                    <Text style={globalStyles.boldText}>Weight(g):</Text>
+                    <Text style={globalStyles.boldText}>Weight(g): </Text>
                     {diaryEntry.foodItems.weight}
                 </Text>
                 <Text>
-                    <Text style={globalStyles.boldText}>Cooking Method:</Text>
+                    <Text style={globalStyles.boldText}>Cooking Method: </Text>
                     {diaryEntry.foodItems.cookingMethod}
                 </Text>
                 <Text>
-                    <Text style={globalStyles.boldText}>Location:</Text>
+                    <Text style={globalStyles.boldText}>Location: </Text>
                     {diaryEntry.location}
                 </Text>
                 <Text>
-                    <Text style={globalStyles.boldText}>Mood:</Text>
+                    <Text style={globalStyles.boldText}>Mood: </Text>
                     {diaryEntry.mood}
                 </Text>
                 <Text>
-                    <Text style={globalStyles.boldText}>Activity:</Text>
+                    <Text style={globalStyles.boldText}>Activity: </Text>
                     {diaryEntry.activity}
                 </Text>
                 <Text>
-                    <Text style={globalStyles.boldText}>Were you hungry:</Text>
+                    <Text style={globalStyles.boldText}>Were you hungry: </Text>
                     {diaryEntry.hungry.toString()}
                 </Text>
                 <Text>
                     <Text style={globalStyles.boldText}>
                         Who were you with:
-                    </Text>
+                    </Text>{' '}
                     {diaryEntry.whoWith}
                 </Text>
             </Card>

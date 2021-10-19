@@ -6,8 +6,6 @@ import {
     FlatList,
     TouchableOpacity,
     Modal,
-    TouchableWithoutFeedback,
-    Keyboard,
 } from 'react-native';
 import Card from '../shared/Card';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -19,9 +17,11 @@ const Home = ({ navigation }) => {
     const [entrys, setEntries] = useState([
         {
             key: '1',
+            time: new Date().toLocaleTimeString().substr(0, 5),
+            date: new Date().toDateString(),
             mood: 'Happy',
             activity: 'Talking with family',
-            hungry: true,
+            hungry: 'Yes',
             location: 'Dinner table',
             whoWith: 'Family',
             mealType: 'Dinner',
@@ -98,8 +98,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#f2f2f2',
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 24,
         alignSelf: 'center',
+        backgroundColor: 'blue',
+        color: 'white',
     },
     modalClose: {
         marginTop: 20,
