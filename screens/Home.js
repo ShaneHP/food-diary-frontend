@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
@@ -11,35 +11,20 @@ import Card from '../shared/Card';
 import { MaterialIcons } from '@expo/vector-icons';
 import { globalStyles } from '../styles/global';
 import EntryForm from './EntryForm';
+import axios from 'axios';
 
 const Home = ({ navigation }) => {
     const [modalOpen, setModalOpen] = useState(false);
-    const [entrys, setEntries] = useState([
-        {
-            key: '1',
-            time: new Date().toLocaleTimeString().substr(0, 5),
-            date: new Date().toDateString(),
-            mood: 'Happy',
-            activity: 'Talking with family',
-            hungry: 'Yes',
-            location: 'Dinner table',
-            whoWith: 'Family',
-            mealType: 'Dinner',
-            foodItems: {
-                name: 'Double Cheeseburger',
-                weight: 300,
-                cookingMethod: 'Fried',
-            },
-        },
-    ]);
+    const [entrys, setEntries] = useState([]);
 
-    const addEntry = (entry) => {
-        entry.key = Math.random().toString();
-        setEntries((prevEntries) => {
-            return [entry, ...prevEntries];
+    const baseURL = 'http://10.0.2.2:3000/entry';
+
+    useEffect(() => {
+        axios.get(baseURL).then((res) => {
+            res.data.key = res.data._id;
+            setEntries(res.data);
         });
-        setModalOpen(false);
-    };
+    }, [modalOpen]);
 
     return (
         <View style={globalStyles.container}>
@@ -54,7 +39,7 @@ const Home = ({ navigation }) => {
                             ...styles.modalClose,
                         }}
                     />
-                    <EntryForm addEntry={addEntry} />
+                    <EntryForm setModalOpen={setModalOpen} />
                 </View>
             </Modal>
 

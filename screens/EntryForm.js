@@ -13,6 +13,10 @@ import { Formik } from 'formik';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import * as yup from 'yup';
+import axios from 'axios';
+import qs from 'qs';
+
+const baseURL = 'http://10.0.2.2:3000/entry';
 
 const entrySchema = yup.object({
     date: yup.string().required('Date is required'),
@@ -30,9 +34,29 @@ const entrySchema = yup.object({
     }),
 });
 
-const EntryForm = ({ addEntry }) => {
+const EntryForm = ({ setModalOpen }) => {
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
+
+    const onSubmit = (values, actions) => {
+        actions.resetForm();
+
+        const options = {
+            method: 'POST',
+            headers: { 'content-type': 'application/x-www-form-urlencoded' },
+            data: qs.stringify(values),
+            baseURL,
+        };
+
+        axios(options)
+            .then((res) => {
+                console.log(res);
+                setModalOpen(false);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
     return (
         <View style={globalStyles.container}>
@@ -54,10 +78,7 @@ const EntryForm = ({ addEntry }) => {
                         cookingMethod: '',
                     },
                 }}
-                onSubmit={(values, actions) => {
-                    actions.resetForm();
-                    addEntry(values);
-                }}
+                onSubmit={onSubmit}
             >
                 {(formikProps) => (
                     <FormFields
