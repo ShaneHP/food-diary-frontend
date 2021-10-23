@@ -44,4 +44,21 @@ export const globalStyles = StyleSheet.create({
     boldText: {
         fontWeight: 'bold',
     },
+    modalToggle: {
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#f2f2f2',
+        padding: 10,
+        borderRadius: 24,
+        alignSelf: 'center',
+        backgroundColor: 'blue',
+        color: 'white',
+    },
+    modalClose: {
+        marginTop: 20,
+        marginBottom: 0,
+    },
+    modalContent: {
+        flex: 1,
+    },
 });

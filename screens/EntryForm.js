@@ -34,23 +34,60 @@ const entrySchema = yup.object({
     }),
 });
 
-const EntryForm = ({ setModalOpen }) => {
-    const [date, setDate] = useState(new Date());
-    const [time, setTime] = useState(new Date());
+const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
+    const [date, setDate] = useState(
+        initialValues ? new Date(initialValues.date) : new Date()
+    );
+    const [time, setTime] = useState(
+        initialValues
+            ? new Date(`${initialValues.date}, ${initialValues.time}`)
+            : new Date()
+    );
 
     const onSubmit = (values, actions) => {
         actions.resetForm();
 
+        if (isUpdate) {
+            console.log('updating');
+            updateEntry(values);
+        } else {
+            addEntry(values);
+        }
+    };
+
+    const addEntry = (values) => {
         const options = {
             method: 'POST',
-            headers: { 'content-type': 'application/x-www-form-urlencoded' },
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+            },
             data: qs.stringify(values),
             baseURL,
         };
 
         axios(options)
             .then((res) => {
-                console.log(res);
+                console.log('entry successfully added');
+                setModalOpen(false);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    const updateEntry = (values) => {
+        const options = {
+            method: 'PATCH',
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+            },
+            data: qs.stringify(values),
+            url: `${baseURL}/${values._id}`,
+        };
+
+        axios(options)
+            .then((res) => {
+                console.log('entry successfully updated');
                 setModalOpen(false);
             })
             .catch((err) => {
@@ -63,21 +100,23 @@ const EntryForm = ({ setModalOpen }) => {
             <Formik
                 style={globalStyles.content}
                 validationSchema={entrySchema}
-                initialValues={{
-                    date: date.toDateString(),
-                    time: time.toLocaleTimeString().substr(0, 5),
-                    mood: '',
-                    activity: '',
-                    hungry: '',
-                    location: '',
-                    whoWith: '',
-                    mealType: '',
-                    foodItems: {
-                        name: '',
-                        weight: '',
-                        cookingMethod: '',
-                    },
-                }}
+                initialValues={
+                    initialValues || {
+                        date: date.toDateString(),
+                        time: time.toLocaleTimeString().substr(0, 5),
+                        mood: '',
+                        activity: '',
+                        hungry: '',
+                        location: '',
+                        whoWith: '',
+                        mealType: '',
+                        foodItems: {
+                            name: '',
+                            weight: '',
+                            cookingMethod: '',
+                        },
+                    }
+                }
                 onSubmit={onSubmit}
             >
                 {(formikProps) => (
@@ -87,6 +126,7 @@ const EntryForm = ({ setModalOpen }) => {
                         setDate={setDate}
                         time={time}
                         setTime={setTime}
+                        initialValues={initialValues}
                     />
                 )}
             </Formik>
@@ -94,11 +134,18 @@ const EntryForm = ({ setModalOpen }) => {
     );
 };
 
-const FormFields = ({ formikProps, date, setDate, time, setTime }) => {
+const FormFields = ({
+    formikProps,
+    date,
+    setDate,
+    time,
+    setTime,
+    initialValues = {},
+}) => {
     const [show, setShow] = useState(false);
     const [showTime, setShowTime] = useState(false);
     const [mealTypeOpen, setMealTypeOpen] = useState(false);
-    const [mealType, setMealType] = useState(null);
+    const [mealType, setMealType] = useState(initialValues.mealType || null);
     const [mealTypeItems, setMealTypeItems] = useState([
         { label: 'Dinner', value: 'Dinner' },
         { label: 'Lunch', value: 'Lunch' },
@@ -106,7 +153,7 @@ const FormFields = ({ formikProps, date, setDate, time, setTime }) => {
         { label: 'Snack', value: 'Snack' },
     ]);
     const [hungryOpen, setHungryOpen] = useState(false);
-    const [hungry, setHungry] = useState(null);
+    const [hungry, setHungry] = useState(initialValues.hungry || null);
     const [hungryItems, setHungryItems] = useState([
         { label: 'Yes', value: 'Yes' },
         { label: 'No', value: 'no' },
@@ -239,15 +286,6 @@ const FormFields = ({ formikProps, date, setDate, time, setTime }) => {
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.activity && formikProps.errors.activity}
             </Text>
-            {/* <TextInput
-                style={globalStyles.input}
-                placeholder="Were you hungry?"
-                onChangeText={formikProps.handleChange('hungry')}
-                value={formikProps.values.hungry}
-            />
-            <Text style={globalStyles.errorText}>
-                {formikProps.touched.hungry && formikProps.errors.hungry}
-            </Text> */}
             <DropDownPicker
                 open={hungryOpen}
                 value={hungry}
@@ -320,7 +358,11 @@ const FormFields = ({ formikProps, date, setDate, time, setTime }) => {
                     formikProps.errors.foodItems.cookingMethod}
             </Text>
 
-            <FlatButton text="Submit" onPress={formikProps.handleSubmit} />
+            <FlatButton
+                text="Submit"
+                onPress={formikProps.handleSubmit}
+                backgroundColor="blue"
+            />
         </ScrollView>
     );
 };

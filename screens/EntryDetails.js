@@ -1,13 +1,55 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, View, Modal } from 'react-native';
 import Card from '../shared/Card';
+import FlatButton from '../shared/Button';
+import EntryForm from './EntryForm';
 import { globalStyles } from '../styles/global';
+import { MaterialIcons } from '@expo/vector-icons';
+import axios from 'axios';
 
 const EntryDetails = ({ route }) => {
-    const diaryEntry = route.params;
+    const payload = route.params;
+    const id = payload._id;
+
+    const [diaryEntry, setDiaryEntry] = useState({});
+    const [formOpen, setFormOpen] = useState(false);
+
+    const baseURL = 'http://10.0.2.2:3000/entry';
+
+    useEffect(() => {
+        let isActive = true;
+        axios.get(`${baseURL}/${id}`).then((res) => {
+            if (isActive) {
+                setDiaryEntry(res.data);
+            }
+        });
+
+        //cleanup function prevents updating state of unmounted component
+        return () => {
+            isActive = false;
+        };
+    }, [formOpen]);
 
     return (
         <View style={globalStyles.container}>
+            <Modal visible={formOpen} animationType="slide">
+                <View style={globalStyles.modalContent}>
+                    <MaterialIcons
+                        name="close"
+                        size={24}
+                        onPress={() => setFormOpen(false)}
+                        style={{
+                            ...globalStyles.modalToggle,
+                            ...globalStyles.modalClose,
+                        }}
+                    />
+                    <EntryForm
+                        setModalOpen={setFormOpen}
+                        initialValues={diaryEntry}
+                        isUpdate={true}
+                    />
+                </View>
+            </Modal>
             <Card>
                 <Text>
                     <Text style={globalStyles.boldText}>Date:</Text>{' '}
@@ -23,15 +65,15 @@ const EntryDetails = ({ route }) => {
                 </Text>
                 <Text>
                     <Text style={globalStyles.boldText}>Food Item: </Text>
-                    {diaryEntry.foodItems.name}
+                    {diaryEntry.foodItems && diaryEntry.foodItems.name}
                 </Text>
                 <Text>
                     <Text style={globalStyles.boldText}>Weight(g): </Text>
-                    {diaryEntry.foodItems.weight}
+                    {diaryEntry.foodItems && diaryEntry.foodItems.weight}
                 </Text>
                 <Text>
                     <Text style={globalStyles.boldText}>Cooking Method: </Text>
-                    {diaryEntry.foodItems.cookingMethod}
+                    {diaryEntry.foodItems && diaryEntry.foodItems.cookingMethod}
                 </Text>
                 <Text>
                     <Text style={globalStyles.boldText}>Location: </Text>
@@ -47,7 +89,7 @@ const EntryDetails = ({ route }) => {
                 </Text>
                 <Text>
                     <Text style={globalStyles.boldText}>Were you hungry: </Text>
-                    {diaryEntry.hungry.toString()}
+                    {diaryEntry.hungry && diaryEntry.hungry.toString()}
                 </Text>
                 <Text>
                     <Text style={globalStyles.boldText}>
@@ -56,6 +98,11 @@ const EntryDetails = ({ route }) => {
                     {diaryEntry.whoWith}
                 </Text>
             </Card>
+            <FlatButton
+                text="Update Entry"
+                onPress={() => setFormOpen(true)}
+                backgroundColor="blue"
+            />
         </View>
     );
 };

@@ -1,10 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-const FlatButton = ({ text, onPress }) => {
+const FlatButton = ({ text, onPress, backgroundColor }) => {
     return (
         <TouchableOpacity onPress={onPress}>
-            <View style={styles.button}>
+            <View
+                style={{ ...styles.button, backgroundColor: backgroundColor }}
+            >
                 <Text style={styles.buttonText}>{text}</Text>
             </View>
         </TouchableOpacity>
@@ -18,7 +20,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingVertical: 14,
         paddingHorizontal: 10,
-        backgroundColor: 'blue',
     },
     buttonText: {
         color: 'white',
