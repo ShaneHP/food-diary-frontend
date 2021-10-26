@@ -7,7 +7,14 @@ const Drawer = createDrawerNavigator();
 
 const Root = () => {
     return (
-        <Drawer.Navigator>
+        <Drawer.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: 'blue',
+                },
+                headerTintColor: 'white',
+            }}
+        >
             <Drawer.Screen name="Home" component={Home} />
             <Drawer.Screen name="About" component={About} />
         </Drawer.Navigator>

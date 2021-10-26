@@ -5,7 +5,7 @@ import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import ReviewDetails from './screens/ReviewDetails';
+import EntryDetails from './screens/EntryDetails';
 
 const Stack = createStackNavigator();
 
@@ -25,10 +25,9 @@ export default function App() {
                 <Stack.Navigator
                     screenOptions={{
                         headerStyle: {
-                            backgroundColor: '#ddd',
-                            height: 60,
+                            backgroundColor: 'blue',
                         },
-                        headerTintColor: '#444',
+                        headerTintColor: 'white',
                     }}
                 >
                     <Stack.Screen
@@ -36,7 +35,11 @@ export default function App() {
                         component={Root}
                         options={{ headerShown: false }}
                     />
-                    <Stack.Screen name="Reviews" component={ReviewDetails} />
+                    <Stack.Screen
+                        name="EntryDetails"
+                        component={EntryDetails}
+                        options={{ title: 'Entry Details' }}
+                    />
                 </Stack.Navigator>
             </NavigationContainer>
         );
