@@ -14,6 +14,7 @@ import { globalStyles } from '../styles/global';
 import { useFocusEffect } from '@react-navigation/core';
 import EntryForm from './EntryForm';
 import axios from 'axios';
+import { API_KEY } from '@env';
 
 const Home = ({ navigation }) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -28,14 +29,19 @@ const Home = ({ navigation }) => {
         useCallback(() => {
             let isActive = true;
             console.log('effect running');
-            axios.get(baseURL).then((res) => {
-                const entriesWithKey = res.data.map((entry) => {
-                    return { key: entry._id, ...entry };
+            axios
+                .get(baseURL, { headers: { 'server-api-key': API_KEY } })
+                .then((res) => {
+                    const entriesWithKey = res.data.map((entry) => {
+                        return { key: entry._id, ...entry };
+                    });
+                    if (isActive) {
+                        setEntries(entriesWithKey);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
                 });
-                if (isActive) {
-                    setEntries(entriesWithKey);
-                }
-            });
 
             //cleanup function prevents updating state of unmounted component
             return () => {
@@ -46,9 +52,16 @@ const Home = ({ navigation }) => {
 
     const deleteEntry = () => {
         console.log(selectedData);
-        axios.delete(`${baseURL}/${selectedData}`).then(() => {
-            console.log('entry deleted');
-        });
+        axios
+            .delete(`${baseURL}/${selectedData}`, {
+                headers: { 'server-api-key': API_KEY },
+            })
+            .then(() => {
+                console.log('entry deleted');
+            })
+            .catch((err) => {
+                console.log(err);
+            });
         setDeleteModalOpen(false);
     };
 

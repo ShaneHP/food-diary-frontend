@@ -15,6 +15,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import * as yup from 'yup';
 import axios from 'axios';
 import qs from 'qs';
+import { API_KEY } from '@env';
 
 const baseURL = 'http://10.0.2.2:3000/entry';
 
@@ -60,6 +61,7 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
             method: 'POST',
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
+                'server-api-key': API_KEY,
             },
             data: qs.stringify(values),
             baseURL,
@@ -80,6 +82,7 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
             method: 'PATCH',
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
+                'server-api-key': API_KEY,
             },
             data: qs.stringify(values),
             url: `${baseURL}/${values._id}`,

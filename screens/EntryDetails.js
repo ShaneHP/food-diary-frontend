@@ -6,6 +6,7 @@ import EntryForm from './EntryForm';
 import { globalStyles } from '../styles/global';
 import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
+import { API_KEY } from '@env';
 
 const EntryDetails = ({ route }) => {
     const payload = route.params;
@@ -18,11 +19,16 @@ const EntryDetails = ({ route }) => {
 
     useEffect(() => {
         let isActive = true;
-        axios.get(`${baseURL}/${id}`).then((res) => {
-            if (isActive) {
-                setDiaryEntry(res.data);
-            }
-        });
+        axios
+            .get(`${baseURL}/${id}`, { headers: { 'server-api-key': API_KEY } })
+            .then((res) => {
+                if (isActive) {
+                    setDiaryEntry(res.data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
 
         //cleanup function prevents updating state of unmounted component
         return () => {
