@@ -14,7 +14,7 @@ import { globalStyles } from '../styles/global';
 import { useFocusEffect } from '@react-navigation/core';
 import EntryForm from './EntryForm';
 import axios from 'axios';
-import { API_KEY } from '@env';
+import { API_KEY, BASE_URL } from '@env';
 
 const Home = ({ navigation }) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -22,15 +22,13 @@ const Home = ({ navigation }) => {
     const [selectedData, setSelectedData] = useState('');
     const [entrys, setEntries] = useState([]);
 
-    const baseURL = 'http://10.0.2.2:3000/entry';
-
     // runs when screen comes into focus (not just on mount)
     useFocusEffect(
         useCallback(() => {
             let isActive = true;
             console.log('effect running');
             axios
-                .get(baseURL, { headers: { 'server-api-key': API_KEY } })
+                .get(BASE_URL, { headers: { 'server-api-key': API_KEY } })
                 .then((res) => {
                     const entriesWithKey = res.data.map((entry) => {
                         return { key: entry._id, ...entry };
@@ -53,7 +51,7 @@ const Home = ({ navigation }) => {
     const deleteEntry = () => {
         console.log(selectedData);
         axios
-            .delete(`${baseURL}/${selectedData}`, {
+            .delete(`${BASE_URL}/${selectedData}`, {
                 headers: { 'server-api-key': API_KEY },
             })
             .then(() => {
@@ -121,7 +119,7 @@ const Home = ({ navigation }) => {
                     return (
                         <TouchableOpacity
                             onPress={() =>
-                                navigation.navigate('EntryDetails', item)
+                                navigation.navigate('EntryDetails', item._id)
                             }
                         >
                             <Card>

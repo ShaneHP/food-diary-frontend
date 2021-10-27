@@ -6,21 +6,20 @@ import EntryForm from './EntryForm';
 import { globalStyles } from '../styles/global';
 import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
-import { API_KEY } from '@env';
+import { API_KEY, BASE_URL } from '@env';
 
 const EntryDetails = ({ route }) => {
-    const payload = route.params;
-    const id = payload._id;
+    const id = route.params;
 
     const [diaryEntry, setDiaryEntry] = useState({});
     const [formOpen, setFormOpen] = useState(false);
 
-    const baseURL = 'http://10.0.2.2:3000/entry';
-
     useEffect(() => {
         let isActive = true;
         axios
-            .get(`${baseURL}/${id}`, { headers: { 'server-api-key': API_KEY } })
+            .get(`${BASE_URL}/${id}`, {
+                headers: { 'server-api-key': API_KEY },
+            })
             .then((res) => {
                 if (isActive) {
                     setDiaryEntry(res.data);
