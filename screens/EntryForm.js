@@ -15,9 +15,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import * as yup from 'yup';
 import axios from 'axios';
 import qs from 'qs';
-import { API_KEY } from '@env';
-
-const baseURL = 'http://10.0.2.2:3000/entry';
+import { API_KEY, BASE_URL } from '@env';
 
 const entrySchema = yup.object({
     date: yup.string().required('Date is required'),
@@ -64,7 +62,7 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
                 'server-api-key': API_KEY,
             },
             data: qs.stringify(values),
-            baseURL,
+            url: BASE_URL,
         };
 
         axios(options)
@@ -85,7 +83,7 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
                 'server-api-key': API_KEY,
             },
             data: qs.stringify(values),
-            url: `${baseURL}/${values._id}`,
+            url: `${BASE_URL}/${values._id}`,
         };
 
         axios(options)
