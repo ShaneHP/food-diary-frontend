@@ -16,6 +16,7 @@ const EntryDetails = ({ route }) => {
 
     useEffect(() => {
         let isActive = true;
+        console.log(id);
         axios
             .get(`${BASE_URL}/${id}`, {
                 headers: { 'server-api-key': API_KEY },

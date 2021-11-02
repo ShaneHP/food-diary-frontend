@@ -25,6 +25,7 @@ const Home = ({ navigation }) => {
     // runs when screen comes into focus (not just on mount)
     useFocusEffect(
         useCallback(() => {
+            console.log(BASE_URL);
             let isActive = true;
             console.log('effect running');
             axios
