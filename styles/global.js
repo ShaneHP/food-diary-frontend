@@ -48,7 +48,7 @@ export const globalStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#f2f2f2',
         padding: 10,
-        borderRadius: 24,
+        borderRadius: 30,
         alignSelf: 'center',
         backgroundColor: 'blue',
         color: 'white',

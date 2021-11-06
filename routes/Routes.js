@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { AuthContext } from '../providers/AuthProvider';
 import AuthStack from './AuthStack';
 import AppTabs from './AppTabs';
@@ -16,17 +16,17 @@ const getFonts = () => {
 };
 
 export default function Routes() {
-    const { user, setUser } = useContext(AuthContext);
+    const { user, getUserData } = useContext(AuthContext);
+
     const [loading, setLoading] = useState(true);
     const [fontsLoading, setFontsLoading] = useState(true);
 
     useEffect(() => {
         // check if user is logged in
-        AsyncStorage.getItem('user')
-            .then((userString) => {
-                if (userString) {
-                    const parsedUser = JSON.parse(userString);
-                    setUser(parsedUser);
+        SecureStore.getItemAsync('jwt')
+            .then((jwt) => {
+                if (jwt) {
+                    getUserData(jwt);
                 }
                 setLoading(false);
             })

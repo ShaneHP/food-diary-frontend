@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import { AuthContext } from '../providers/AuthProvider';
 import { globalStyles } from '../styles/global';
@@ -12,12 +12,32 @@ const registerSchema = yup.object({
 
 const Register = ({ navigation }) => {
     const { register } = useContext(AuthContext);
+    const [errors, setErrors] = useState({});
 
-    const onSubmit = (values, actions) => {
-        actions.resetForm();
+    const errorCheckEmail = (formikProps) => {
+        if (formikProps.touched.email && formikProps.errors.email) {
+            return formikProps.errors.email;
+        } else {
+            return errors.email;
+        }
+    };
 
+    const errorCheckPassword = (formikProps) => {
+        if (formikProps.touched.password && formikProps.errors.password) {
+            return formikProps.errors.password;
+        } else {
+            return errors.password;
+        }
+    };
+
+    const onSubmit = async (values, actions) => {
         const { email, password } = values;
-        register(email, password);
+        const res = await register(email, password);
+        if (res) {
+            setErrors(res.errors);
+            return;
+        }
+        actions.resetForm();
     };
 
     return (
@@ -55,8 +75,7 @@ const Register = ({ navigation }) => {
                             value={formikProps.values.email}
                         />
                         <Text style={globalStyles.errorText}>
-                            {formikProps.touched.email &&
-                                formikProps.errors.email}
+                            {errorCheckEmail(formikProps)}
                         </Text>
                         <TextInput
                             textContentType="password"
@@ -67,8 +86,7 @@ const Register = ({ navigation }) => {
                             value={formikProps.values.password}
                         />
                         <Text style={globalStyles.errorText}>
-                            {formikProps.touched.password &&
-                                formikProps.errors.password}
+                            {errorCheckPassword(formikProps)}
                         </Text>
 
                         <Button
@@ -81,14 +99,23 @@ const Register = ({ navigation }) => {
             <View
                 style={{
                     paddingTop: 20,
+                    alignItems: 'center',
                 }}
             >
-                <Button
-                    title="go back to login page"
-                    onPress={() => {
-                        navigation.navigate('Login');
-                    }}
-                />
+                <Text>
+                    <Text>
+                        Already a member?
+                        <Text
+                            style={{ color: 'blue' }}
+                            onPress={() => {
+                                navigation.navigate('Login');
+                            }}
+                        >
+                            {' '}
+                            Login
+                        </Text>
+                    </Text>
+                </Text>
             </View>
         </View>
     );
