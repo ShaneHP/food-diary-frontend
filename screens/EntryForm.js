@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
     StyleSheet,
     Text,
@@ -15,7 +15,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import * as yup from 'yup';
 import axios from 'axios';
 import qs from 'qs';
-import { API_KEY, BASE_URL } from '@env';
+import { BASE_URL } from '@env';
+import { AuthContext } from '../providers/AuthProvider';
 
 const entrySchema = yup.object({
     date: yup.string().required('Date is required'),
@@ -34,6 +35,8 @@ const entrySchema = yup.object({
 });
 
 const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
+    const { user } = useContext(AuthContext);
+
     const [date, setDate] = useState(
         initialValues ? new Date(initialValues.date) : new Date()
     );
@@ -55,14 +58,16 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
     };
 
     const addEntry = (values) => {
+        values.userId = user._id;
+
         const options = {
             method: 'POST',
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
-                'server-api-key': API_KEY,
+                Authorization: `Bearer ${user.jwt}`,
             },
             data: qs.stringify(values),
-            url: BASE_URL,
+            url: `${BASE_URL}/entry`,
         };
 
         axios(options)
@@ -80,10 +85,10 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
             method: 'PATCH',
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
-                'server-api-key': API_KEY,
+                Authorization: `Bearer ${user.jwt}`,
             },
             data: qs.stringify(values),
-            url: `${BASE_URL}/${values._id}`,
+            url: `${BASE_URL}/entry/${values._id}`,
         };
 
         axios(options)

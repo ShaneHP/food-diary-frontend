@@ -4,7 +4,6 @@ export const globalStyles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#fff',
     },
     titleText: {
         fontFamily: 'nunito-bold',
@@ -49,7 +48,7 @@ export const globalStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#f2f2f2',
         padding: 10,
-        borderRadius: 24,
+        borderRadius: 30,
         alignSelf: 'center',
         backgroundColor: 'blue',
         color: 'white',
@@ -60,5 +59,10 @@ export const globalStyles = StyleSheet.create({
     },
     modalContent: {
         flex: 1,
+    },
+    center: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

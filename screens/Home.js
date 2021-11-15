@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import {
     StyleSheet,
     Text,
@@ -14,9 +14,12 @@ import { globalStyles } from '../styles/global';
 import { useFocusEffect } from '@react-navigation/core';
 import EntryForm from './EntryForm';
 import axios from 'axios';
-import { API_KEY, BASE_URL } from '@env';
+import { BASE_URL } from '@env';
+import { AuthContext } from '../providers/AuthProvider';
 
 const Home = ({ navigation }) => {
+    const { user } = useContext(AuthContext);
+
     const [modalOpen, setModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState('');
@@ -26,9 +29,11 @@ const Home = ({ navigation }) => {
     useFocusEffect(
         useCallback(() => {
             let isActive = true;
-            console.log('effect running');
             axios
-                .get(BASE_URL, { headers: { 'server-api-key': API_KEY } })
+                .get(`${BASE_URL}/entry`, {
+                    headers: { Authorization: `Bearer ${user.jwt}` },
+                    params: { userId: user._id },
+                })
                 .then((res) => {
                     const entriesWithKey = res.data.map((entry) => {
                         return { key: entry._id, ...entry };
@@ -51,8 +56,8 @@ const Home = ({ navigation }) => {
     const deleteEntry = () => {
         console.log(selectedData);
         axios
-            .delete(`${BASE_URL}/${selectedData}`, {
-                headers: { 'server-api-key': API_KEY },
+            .delete(`${BASE_URL}/entry/${selectedData}`, {
+                headers: { Authorization: `Bearer ${user.jwt}` },
             })
             .then(() => {
                 console.log('entry deleted');
@@ -108,7 +113,7 @@ const Home = ({ navigation }) => {
 
             <MaterialIcons
                 name="add"
-                size={24}
+                size={30}
                 onPress={() => setModalOpen(true)}
                 style={globalStyles.modalToggle}
             />

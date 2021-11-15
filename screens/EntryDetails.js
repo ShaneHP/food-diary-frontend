@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Text, View, Modal } from 'react-native';
 import Card from '../shared/Card';
 import FlatButton from '../shared/Button';
@@ -6,19 +6,23 @@ import EntryForm from './EntryForm';
 import { globalStyles } from '../styles/global';
 import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
-import { API_KEY, BASE_URL } from '@env';
+import { BASE_URL } from '@env';
+import { AuthContext } from '../providers/AuthProvider';
 
 const EntryDetails = ({ route }) => {
     const id = route.params;
+
+    const { user } = useContext(AuthContext);
 
     const [diaryEntry, setDiaryEntry] = useState({});
     const [formOpen, setFormOpen] = useState(false);
 
     useEffect(() => {
         let isActive = true;
+        console.log(id);
         axios
-            .get(`${BASE_URL}/${id}`, {
-                headers: { 'server-api-key': API_KEY },
+            .get(`${BASE_URL}/entry/${id}`, {
+                headers: { Authorization: `Bearer ${user.jwt}` },
             })
             .then((res) => {
                 if (isActive) {
