@@ -21,6 +21,8 @@ export const globalStyles = StyleSheet.create({
         fontSize: 18,
         borderRadius: 6,
         color: 'black',
+        backgroundColor: 'white',
+        marginTop: 5,
     },
     inputButton: {
         marginVertical: 5,
@@ -45,20 +47,20 @@ export const globalStyles = StyleSheet.create({
     },
     modalToggle: {
         marginBottom: 10,
-        borderWidth: 1,
-        borderColor: '#f2f2f2',
-        padding: 10,
-        borderRadius: 30,
+        paddingHorizontal: 30,
         alignSelf: 'center',
-        backgroundColor: 'blue',
-        color: 'white',
+        color: 'black',
     },
     modalClose: {
         marginTop: 20,
         marginBottom: 0,
+        paddingHorizontal: 30,
+        alignSelf: 'flex-end',
+        color: 'black',
     },
     modalContent: {
         flex: 1,
+        backgroundColor: '#F6F5F5',
     },
     center: {
         flex: 1,

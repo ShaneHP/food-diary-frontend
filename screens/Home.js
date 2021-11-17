@@ -16,6 +16,7 @@ import EntryForm from './EntryForm';
 import axios from 'axios';
 import { BASE_URL } from '@env';
 import { AuthContext } from '../providers/AuthProvider';
+import EntryForm2 from './EntryForm2';
 
 const Home = ({ navigation }) => {
     const { user } = useContext(AuthContext);
@@ -77,11 +78,10 @@ const Home = ({ navigation }) => {
                         size={24}
                         onPress={() => setModalOpen(false)}
                         style={{
-                            ...globalStyles.modalToggle,
                             ...globalStyles.modalClose,
                         }}
                     />
-                    <EntryForm setModalOpen={setModalOpen} />
+                    <EntryForm2 setModalOpen={setModalOpen} />
                 </View>
             </Modal>
 
