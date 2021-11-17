@@ -39,6 +39,21 @@ const trafficRanges = {
     },
 };
 
+const trafficColors = {
+    Green: {
+        value: 'Green',
+        color: '#54D049',
+    },
+    Amber: {
+        value: 'Amber',
+        color: '#FF7E06',
+    },
+    Red: {
+        value: 'Red',
+        color: '#E61E10',
+    },
+};
+
 const entrySchema = yup.object({
     date: yup.string().required('Date is required'),
     time: yup.string().required('Time is required'),
@@ -47,6 +62,7 @@ const entrySchema = yup.object({
     mood: yup.string().required('Mood is required'),
     activity: yup.string().required('Activity is required'),
     hungry: yup.string().required('Hungry is required'),
+    physicalFeeling: yup.string().required('Physical feeling is required'),
     whoWith: yup.string().required('Who with is required'),
     foodItems: yup.object({
         name: yup.string().required('Name is required'),
@@ -85,22 +101,15 @@ const EntryForm2 = ({ setModalOpen, initialValues, isUpdate = false }) => {
     const [hungry, setHungry] = useState(
         initialValues ? initialValues.hungry : null
     );
-    const [fatTraffic, setFatTraffic] = useState({
-        value: 'Green',
-        color: '#54D049',
-    });
-    const [saturatesTraffic, setSaturatesTraffic] = useState({
-        value: 'Green',
-        color: '#54D049',
-    });
-    const [sugarTraffic, setSugarTraffic] = useState({
-        value: 'Green',
-        color: '#54D049',
-    });
-    const [saltTraffic, setSaltTraffic] = useState({
-        value: 'Green',
-        color: '#54D049',
-    });
+    const [physicalFeeling, setPhysicalFeeling] = useState(
+        initialValues ? initialValues.physicalFeeling : null
+    );
+    const [fatTraffic, setFatTraffic] = useState(trafficColors.Green);
+    const [saturatesTraffic, setSaturatesTraffic] = useState(
+        trafficColors.Green
+    );
+    const [sugarTraffic, setSugarTraffic] = useState(trafficColors.Green);
+    const [saltTraffic, setSaltTraffic] = useState(trafficColors.Green);
     const [step, setStep] = useState(1);
 
     const onSubmit = (values, actions) => {
@@ -173,25 +182,26 @@ const EntryForm2 = ({ setModalOpen, initialValues, isUpdate = false }) => {
                         location: '',
                         whoWith: '',
                         mealType: '',
+                        physicalFeeling: '',
                         foodItems: {
                             name: '',
                             weight: '',
                             nutritionalValues: {
                                 fat: {
                                     weight: '',
-                                    trafficLight: '',
+                                    trafficLight: fatTraffic,
                                 },
                                 saturates: {
                                     weight: '',
-                                    trafficLight: '',
+                                    trafficLight: saturatesTraffic,
                                 },
                                 sugar: {
                                     weight: '',
-                                    trafficLight: '',
+                                    trafficLight: sugarTraffic,
                                 },
                                 salt: {
                                     weight: '',
-                                    trafficLight: '',
+                                    trafficLight: saltTraffic,
                                 },
                             },
                         },
@@ -213,7 +223,6 @@ const EntryForm2 = ({ setModalOpen, initialValues, isUpdate = false }) => {
                                     setSugarTraffic={setSugarTraffic}
                                     saltTraffic={saltTraffic}
                                     setSaltTraffic={setSaltTraffic}
-                                    initialValues={initialValues}
                                     setStep={setStep}
                                 />
                             );
@@ -229,7 +238,8 @@ const EntryForm2 = ({ setModalOpen, initialValues, isUpdate = false }) => {
                                     setMealType={setMealType}
                                     hungry={hungry}
                                     setHungry={setHungry}
-                                    initialValues={initialValues}
+                                    physicalFeeling={physicalFeeling}
+                                    setPhysicalFeeling={setPhysicalFeeling}
                                     setStep={setStep}
                                 />
                             );
@@ -250,16 +260,48 @@ const FormStep1 = ({
     setSugarTraffic,
     saltTraffic,
     setSaltTraffic,
-    initialValues = {},
     setStep,
 }) => {
     const updateTrafficValue = (input, nutrient, setTraffic) => {
         if (input <= trafficRanges[nutrient].green) {
-            setTraffic({ value: 'Green', color: '#54D049' });
+            setTraffic(trafficColors.Green);
         } else if (input <= trafficRanges[nutrient].amber) {
-            setTraffic({ value: 'Amber', color: '#FF7E06' });
+            setTraffic(trafficColors.Amber);
         } else {
-            setTraffic({ value: 'Red', color: '#E61E10' });
+            setTraffic(trafficColors.Red);
+        }
+    };
+
+    const handleNext = async () => {
+        await Promise.all([
+            formikProps.setFieldTouched('foodItems.name', true, false),
+            formikProps.setFieldTouched('foodItems.weight', true, false),
+            formikProps.setFieldTouched(
+                'foodItems.nutritionalValues.fat.weight',
+                true,
+                false
+            ),
+            formikProps.setFieldTouched(
+                'foodItems.nutritionalValues.saturates.weight',
+                true,
+                false
+            ),
+            formikProps.setFieldTouched(
+                'foodItems.nutritionalValues.sugar.weight',
+                true,
+                false
+            ),
+            formikProps.setFieldTouched(
+                'foodItems.nutritionalValues.salt.weight',
+                true,
+                false
+            ),
+        ]);
+
+        const result = await formikProps.validateForm();
+
+        if (!result.foodItems) {
+            setStep(2);
         }
     };
 
@@ -315,10 +357,11 @@ const FormStep1 = ({
                     <TextInput
                         style={styles.nutritionInput}
                         onChangeText={(input) => {
-                            formikProps.handleChange(
-                                'foodItems.nutritionalValues.fat.weight'
-                            );
                             updateTrafficValue(input, 'fat', setFatTraffic);
+                            formikProps.setFieldValue(
+                                'foodItems.nutritionalValues.fat.weight',
+                                input
+                            );
                         }}
                         value={
                             formikProps.values.foodItems.nutritionalValues.fat
@@ -366,8 +409,9 @@ const FormStep1 = ({
                                 'saturates',
                                 setSaturatesTraffic
                             );
-                            formikProps.handleChange(
-                                'foodItems.nutritionalValues.saturates.weight'
+                            formikProps.setFieldValue(
+                                'foodItems.nutritionalValues.saturates.weight',
+                                input
                             );
                         }}
                         value={
@@ -411,8 +455,9 @@ const FormStep1 = ({
                         style={styles.nutritionInput}
                         onChangeText={(input) => {
                             updateTrafficValue(input, 'sugar', setSugarTraffic);
-                            formikProps.handleChange(
-                                'foodItems.nutritionalValues.sugar.weight'
+                            formikProps.setFieldValue(
+                                'foodItems.nutritionalValues.sugar.weight',
+                                input
                             );
                         }}
                         value={
@@ -456,8 +501,9 @@ const FormStep1 = ({
                         style={styles.nutritionInput}
                         onChangeText={(input) => {
                             updateTrafficValue(input, 'salt', setSaltTraffic);
-                            formikProps.handleChange(
-                                'foodItems.nutritionalValues.salt.weight'
+                            formikProps.setFieldValue(
+                                'foodItems.nutritionalValues.salt.weight',
+                                input
                             );
                         }}
                         value={
@@ -495,14 +541,15 @@ const FormStep1 = ({
             </View>
 
             <FlatButton
-                text="Submit"
-                onPress={formikProps.handleSubmit}
-                backgroundColor="blue"
-            />
-            <FlatButton
                 text="next"
-                onPress={() => setStep(2)}
+                onPress={handleNext}
                 backgroundColor="blue"
+                textColor="white"
+                style={{
+                    width: 126,
+                    paddingVertical: 17,
+                    alignSelf: 'flex-end',
+                }}
             />
         </ScrollView>
     );
@@ -518,7 +565,8 @@ const FormStep2 = ({
     setMealType,
     hungry,
     setHungry,
-    initialValues = {},
+    physicalFeeling,
+    setPhysicalFeeling,
     setStep,
 }) => {
     const [show, setShow] = useState(false);
@@ -533,7 +581,12 @@ const FormStep2 = ({
     const [hungryOpen, setHungryOpen] = useState(false);
     const [hungryItems, setHungryItems] = useState([
         { label: 'Yes', value: 'Yes' },
-        { label: 'No', value: 'no' },
+        { label: 'No', value: 'No' },
+    ]);
+    const [physicalOpen, setPhysicalOpen] = useState(false);
+    const [physicalItems, setPhysicalItems] = useState([
+        { label: 'Well', value: 'Well' },
+        { label: 'Unwell', value: 'Unwell' },
     ]);
 
     const onDateChange = (event, selectedDate) => {
@@ -562,6 +615,12 @@ const FormStep2 = ({
         setHungry(selectedHungry);
         formikProps.setFieldValue('hungry', selectedHungry);
     };
+
+    const onPhysicalChange = (selectedPhysical) => {
+        setPhysicalFeeling(selectedPhysical);
+        formikProps.setFieldValue('physicalFeeling', selectedPhysical);
+    };
+
     return (
         <ScrollView style={globalStyles.content}>
             <ProgressBar
@@ -575,6 +634,7 @@ const FormStep2 = ({
                     Additional Information
                 </Text>
             </View>
+            <Text style={styles.inputLabel}>Date</Text>
             <TouchableOpacity onPress={() => setShow(true)}>
                 <TextInput
                     style={[globalStyles.input, styles.datePicker]}
@@ -583,6 +643,7 @@ const FormStep2 = ({
                 />
             </TouchableOpacity>
             {show && <DateTimePicker value={date} onChange={onDateChange} />}
+            <Text style={styles.inputLabel}>Time</Text>
             <TouchableOpacity onPress={() => setShowTime(true)}>
                 <TextInput
                     style={[globalStyles.input, styles.datePicker]}
@@ -598,6 +659,7 @@ const FormStep2 = ({
                     is24Hour={true}
                 />
             )}
+            <Text style={styles.inputLabel}>Meal Type</Text>
             <DropDownPicker
                 open={mealTypeOpen}
                 value={mealType}
@@ -608,7 +670,6 @@ const FormStep2 = ({
                 onOpen={() => setHungryOpen(false)}
                 onChangeValue={onMealTypeChange}
                 listMode="SCROLLVIEW"
-                placeholder="Meal Type"
                 placeholderStyle={{
                     color: 'grey',
                     fontSize: 18,
@@ -633,33 +694,78 @@ const FormStep2 = ({
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.mealType && formikProps.errors.mealType}
             </Text>
+            <Text style={styles.inputLabel}>Location</Text>
             <TextInput
                 style={globalStyles.input}
-                placeholder="Location"
                 onChangeText={formikProps.handleChange('location')}
                 value={formikProps.values.location}
             />
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.location && formikProps.errors.location}
             </Text>
+            <Text style={styles.inputLabel}>
+                How did you feel about your food choice?
+            </Text>
             <TextInput
                 style={globalStyles.input}
-                placeholder="Mood"
                 onChangeText={formikProps.handleChange('mood')}
                 value={formikProps.values.mood}
             />
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.mood && formikProps.errors.mood}
             </Text>
+            <Text style={styles.inputLabel}>
+                How did you feel physically after eating?
+            </Text>
+            <DropDownPicker
+                open={physicalOpen}
+                value={physicalFeeling}
+                items={physicalItems}
+                setOpen={setPhysicalOpen}
+                setValue={setPhysicalFeeling}
+                setItems={setPhysicalItems}
+                onOpen={() => {
+                    setMealTypeOpen(false);
+                    setHungryOpen(false);
+                }}
+                onChangeValue={onPhysicalChange}
+                listMode="SCROLLVIEW"
+                placeholderStyle={{
+                    color: 'grey',
+                    fontSize: 18,
+                }}
+                dropDownContainerStyle={{
+                    borderColor: '#ddd',
+                }}
+                selectedItemContainerStyle={{
+                    backgroundColor: '#ddd',
+                }}
+                selectedItemLabelStyle={{
+                    fontWeight: 'bold',
+                }}
+                listItemLabelStyle={{
+                    fontSize: 18,
+                }}
+                labelStyle={{
+                    fontSize: 18,
+                }}
+                style={globalStyles.input}
+            />
+            <Text style={globalStyles.errorText}>
+                {formikProps.touched.physical && formikProps.errors.physical}
+            </Text>
+            <Text style={styles.inputLabel}>
+                What else were you doing while eating?
+            </Text>
             <TextInput
                 style={globalStyles.input}
-                placeholder="What else were you doing while eating?"
                 onChangeText={formikProps.handleChange('activity')}
                 value={formikProps.values.activity}
             />
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.activity && formikProps.errors.activity}
             </Text>
+            <Text style={styles.inputLabel}>Were you hungry?</Text>
             <DropDownPicker
                 open={hungryOpen}
                 value={hungry}
@@ -670,7 +776,6 @@ const FormStep2 = ({
                 onOpen={() => setMealTypeOpen(false)}
                 onChangeValue={onHungryChange}
                 listMode="SCROLLVIEW"
-                placeholder="Were you hungry?"
                 placeholderStyle={{
                     color: 'grey',
                     fontSize: 18,
@@ -695,20 +800,40 @@ const FormStep2 = ({
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.hungry && formikProps.errors.hungry}
             </Text>
+            <Text style={styles.inputLabel}>Who were you with?</Text>
             <TextInput
                 style={globalStyles.input}
-                placeholder="Who were you with?"
                 onChangeText={formikProps.handleChange('whoWith')}
                 value={formikProps.values.whoWith}
             />
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.whoWith && formikProps.errors.whoWith}
             </Text>
-            <FlatButton
-                text="previous"
-                onPress={() => setStep(1)}
-                backgroundColor="blue"
-            />
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <FlatButton
+                    text="previous"
+                    onPress={() => setStep(1)}
+                    backgroundColor="white"
+                    textColor="blue"
+                    style={{
+                        width: 120,
+                        borderWidth: 3,
+                        borderColor: 'blue',
+                    }}
+                />
+                <FlatButton
+                    text="Submit"
+                    onPress={formikProps.handleSubmit}
+                    textColor="white"
+                    backgroundColor="blue"
+                    style={{ width: 126, paddingVertical: 17 }}
+                />
+            </View>
         </ScrollView>
     );
 };

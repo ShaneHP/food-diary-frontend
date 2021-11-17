@@ -100,11 +100,13 @@ const Home = ({ navigation }) => {
                                 text="Cancel"
                                 onPress={() => setDeleteModalOpen(false)}
                                 backgroundColor="blue"
+                                textColor="white"
                             />
                             <FlatButton
                                 text="Confirm"
                                 onPress={deleteEntry}
                                 backgroundColor="red"
+                                textColor="white"
                             />
                         </View>
                     </View>

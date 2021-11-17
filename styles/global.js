@@ -60,7 +60,7 @@ export const globalStyles = StyleSheet.create({
     },
     modalContent: {
         flex: 1,
-        backgroundColor: '#F6F5F5',
+        backgroundColor: '#F2F2F2',
     },
     center: {
         flex: 1,
