@@ -15,13 +15,11 @@ export const globalStyles = StyleSheet.create({
         lineHeight: 20,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#ddd',
+        borderBottomWidth: 2,
+        borderColor: '#5E5E5E',
         padding: 10,
         fontSize: 18,
-        borderRadius: 6,
         color: 'black',
-        backgroundColor: 'white',
         marginTop: 5,
     },
     inputButton: {

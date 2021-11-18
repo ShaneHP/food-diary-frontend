@@ -70,15 +70,27 @@ const entrySchema = yup.object({
         nutritionalValues: yup.object({
             fat: yup.object({
                 weight: yup.string().required('Fat is required'),
+                trafficLight: yup.object({
+                    guess: yup.string().required('Traffic light is required'),
+                }),
             }),
             saturates: yup.object({
                 weight: yup.string().required('Saturates is required'),
+                trafficLight: yup.object({
+                    guess: yup.string().required('Traffic light is required'),
+                }),
             }),
             sugar: yup.object({
                 weight: yup.string().required('Sugar is required'),
+                trafficLight: yup.object({
+                    guess: yup.string().required('Traffic light is required'),
+                }),
             }),
             salt: yup.object({
                 weight: yup.string().required('Salt is required'),
+                trafficLight: yup.object({
+                    guess: yup.string().required('Traffic light is required'),
+                }),
             }),
         }),
     }),
@@ -104,26 +116,10 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
     const [physicalFeeling, setPhysicalFeeling] = useState(
         initialValues ? initialValues.physicalFeeling : null
     );
-    const [fatTraffic, setFatTraffic] = useState(
-        initialValues
-            ? initialValues.foodItems.nutritionalValues.fat.trafficLight
-            : trafficColors.Green
-    );
-    const [saturatesTraffic, setSaturatesTraffic] = useState(
-        initialValues
-            ? initialValues.foodItems.nutritionalValues.saturates.trafficLight
-            : trafficColors.Green
-    );
-    const [sugarTraffic, setSugarTraffic] = useState(
-        initialValues
-            ? initialValues.foodItems.nutritionalValues.sugar.trafficLight
-            : trafficColors.Green
-    );
-    const [saltTraffic, setSaltTraffic] = useState(
-        initialValues
-            ? initialValues.foodItems.nutritionalValues.salt.trafficLight
-            : trafficColors.Green
-    );
+    const [fatTraffic, setFatTraffic] = useState('');
+    const [saturatesTraffic, setSaturatesTraffic] = useState('');
+    const [sugarTraffic, setSugarTraffic] = useState('');
+    const [saltTraffic, setSaltTraffic] = useState('');
     const [step, setStep] = useState(1);
 
     const onSubmit = (values, actions) => {
@@ -203,19 +199,31 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
                             nutritionalValues: {
                                 fat: {
                                     weight: '',
-                                    trafficLight: fatTraffic,
+                                    trafficLight: {
+                                        guess: '',
+                                        actual: '',
+                                    },
                                 },
                                 saturates: {
                                     weight: '',
-                                    trafficLight: saturatesTraffic,
+                                    trafficLight: {
+                                        guess: '',
+                                        actual: '',
+                                    },
                                 },
                                 sugar: {
                                     weight: '',
-                                    trafficLight: sugarTraffic,
+                                    trafficLight: {
+                                        guess: '',
+                                        actual: '',
+                                    },
                                 },
                                 salt: {
                                     weight: '',
-                                    trafficLight: saltTraffic,
+                                    trafficLight: {
+                                        guess: '',
+                                        actual: '',
+                                    },
                                 },
                             },
                         },
@@ -276,18 +284,50 @@ const FormStep1 = ({
     setSaltTraffic,
     setStep,
 }) => {
-    const updateTrafficValue = (input, nutrient, setTraffic) => {
-        const path = `foodItems.nutritionalValues.${nutrient}.trafficLight`;
+    const [fatTrafficOpen, setFatTrafficOpen] = useState(false);
+    const [saturatesTrafficOpen, setSaturatesTrafficOpen] = useState(false);
+    const [sugarTrafficOpen, setSugarTrafficOpen] = useState(false);
+    const [saltTrafficOpen, setSaltTrafficOpen] = useState(false);
+
+    const [trafficItems, setTrafficItems] = useState([
+        {
+            label: 'Green',
+            value: 'Green',
+            icon: () => (
+                <MaterialIcons name="circle" color="#54D049" size={28} />
+            ),
+        },
+        {
+            label: 'Amber',
+            value: 'Amber',
+            icon: () => (
+                <MaterialIcons name="circle" color="#FF7E06" size={28} />
+            ),
+        },
+        {
+            label: 'Red',
+            value: 'Red',
+            icon: () => (
+                <MaterialIcons name="circle" color="#E61E10" size={28} />
+            ),
+        },
+    ]);
+
+    const onTrafficChange = (selected, nutrient, setTraffic) => {
+        const path = `foodItems.nutritionalValues.${nutrient}.trafficLight.guess`;
+        setTraffic(selected);
+        formikProps.setFieldValue(path, selected);
+    };
+
+    const updateActualTrafficValue = (input, nutrient) => {
+        const path = `foodItems.nutritionalValues.${nutrient}.trafficLight.actual`;
 
         if (input <= trafficRanges[nutrient].green) {
-            setTraffic(trafficColors.Green);
-            formikProps.setFieldValue(path, trafficColors.Green);
+            formikProps.setFieldValue(path, 'Green');
         } else if (input <= trafficRanges[nutrient].amber) {
-            setTraffic(trafficColors.Amber);
-            formikProps.setFieldValue(path, trafficColors.Amber);
+            formikProps.setFieldValue(path, 'Amber');
         } else {
-            setTraffic(trafficColors.Red);
-            formikProps.setFieldValue(path, trafficColors.Red);
+            formikProps.setFieldValue(path, 'Red');
         }
     };
 
@@ -346,7 +386,6 @@ const FormStep1 = ({
             />
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.foodItems &&
-                    formikProps.touched.foodItems.name &&
                     formikProps.errors.foodItems &&
                     formikProps.errors.foodItems.name}
             </Text>
@@ -359,7 +398,6 @@ const FormStep1 = ({
             />
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.foodItems &&
-                    formikProps.touched.foodItems.weight &&
                     formikProps.errors.foodItems &&
                     formikProps.errors.foodItems.weight}
             </Text>
@@ -376,11 +414,11 @@ const FormStep1 = ({
                     <TextInput
                         style={styles.nutritionInput}
                         onChangeText={(input) => {
-                            updateTrafficValue(input, 'fat', setFatTraffic);
                             formikProps.setFieldValue(
                                 'foodItems.nutritionalValues.fat.weight',
                                 input
                             );
+                            updateActualTrafficValue(input, 'fat');
                         }}
                         value={
                             formikProps.values.foodItems.nutritionalValues.fat
@@ -390,9 +428,6 @@ const FormStep1 = ({
                     />
                     <Text style={globalStyles.errorText}>
                         {formikProps.touched.foodItems &&
-                            formikProps.touched.foodItems.nutritionalValues &&
-                            formikProps.touched.foodItems.nutritionalValues
-                                .fat &&
                             formikProps.errors.foodItems &&
                             formikProps.errors.foodItems.nutritionalValues &&
                             formikProps.errors.foodItems.nutritionalValues
@@ -402,18 +437,55 @@ const FormStep1 = ({
                     </Text>
                 </View>
 
-                <View>
+                <View style={styles.nutritionValue}>
                     <Text style={styles.inputLabel}>Traffic Light Value</Text>
-                    <View style={styles.trafficLightContainer}>
-                        <MaterialIcons
-                            name="circle"
-                            color={fatTraffic.color}
-                            size={28}
-                        />
-                        <Text
-                            style={styles.trafficText}
-                        >{` ${fatTraffic.value}`}</Text>
-                    </View>
+                    <DropDownPicker
+                        open={fatTrafficOpen}
+                        value={fatTraffic}
+                        items={trafficItems}
+                        setOpen={setFatTrafficOpen}
+                        setValue={setFatTraffic}
+                        setItems={setTrafficItems}
+                        zIndex={4000}
+                        zIndexInverse={6000}
+                        onOpen={() => {
+                            setSaturatesTrafficOpen(false);
+                            setSugarTrafficOpen(false);
+                            setSaltTrafficOpen(false);
+                        }}
+                        onChangeValue={(selected) => {
+                            onTrafficChange(selected, 'fat', setFatTraffic);
+                        }}
+                        listMode="SCROLLVIEW"
+                        placeholder=""
+                        dropDownContainerStyle={{
+                            borderColor: '#5E5E5E',
+                        }}
+                        selectedItemContainerStyle={{
+                            backgroundColor: '#ddd',
+                        }}
+                        selectedItemLabelStyle={{
+                            fontWeight: 'bold',
+                        }}
+                        listItemLabelStyle={{
+                            fontSize: 18,
+                        }}
+                        labelStyle={{
+                            fontSize: 18,
+                        }}
+                        style={styles.trafficInput}
+                    />
+                    <Text style={globalStyles.errorText}>
+                        {formikProps.touched.foodItems &&
+                            formikProps.errors.foodItems &&
+                            formikProps.errors.foodItems.nutritionalValues &&
+                            formikProps.errors.foodItems.nutritionalValues
+                                .fat &&
+                            formikProps.errors.foodItems.nutritionalValues.fat
+                                .trafficLight &&
+                            formikProps.errors.foodItems.nutritionalValues.fat
+                                .trafficLight.guess}
+                    </Text>
                 </View>
             </View>
 
@@ -423,15 +495,11 @@ const FormStep1 = ({
                     <TextInput
                         style={styles.nutritionInput}
                         onChangeText={(input) => {
-                            updateTrafficValue(
-                                input,
-                                'saturates',
-                                setSaturatesTraffic
-                            );
                             formikProps.setFieldValue(
                                 'foodItems.nutritionalValues.saturates.weight',
                                 input
                             );
+                            updateActualTrafficValue(input, 'saturates');
                         }}
                         value={
                             formikProps.values.foodItems.nutritionalValues
@@ -441,9 +509,6 @@ const FormStep1 = ({
                     />
                     <Text style={globalStyles.errorText}>
                         {formikProps.touched.foodItems &&
-                            formikProps.touched.foodItems.nutritionalValues &&
-                            formikProps.touched.foodItems.nutritionalValues
-                                .saturates &&
                             formikProps.errors.foodItems &&
                             formikProps.errors.foodItems.nutritionalValues &&
                             formikProps.errors.foodItems.nutritionalValues
@@ -452,18 +517,60 @@ const FormStep1 = ({
                                 .saturates.weight}
                     </Text>
                 </View>
-                <View>
+
+                <View style={styles.nutritionValue}>
                     <Text style={styles.inputLabel}>Traffic Light Value</Text>
-                    <View style={styles.trafficLightContainer}>
-                        <MaterialIcons
-                            name="circle"
-                            color={saturatesTraffic.color}
-                            size={28}
-                        />
-                        <Text
-                            style={styles.trafficText}
-                        >{` ${saturatesTraffic.value}`}</Text>
-                    </View>
+                    <DropDownPicker
+                        open={saturatesTrafficOpen}
+                        value={saturatesTraffic}
+                        items={trafficItems}
+                        setOpen={setSaturatesTrafficOpen}
+                        setValue={setSaturatesTraffic}
+                        setItems={setTrafficItems}
+                        zIndex={3000}
+                        zIndexInverse={7000}
+                        onOpen={() => {
+                            setFatTrafficOpen(false);
+                            setSugarTrafficOpen(false);
+                            setSaltTrafficOpen(false);
+                        }}
+                        onChangeValue={(selected) => {
+                            onTrafficChange(
+                                selected,
+                                'saturates',
+                                setSaturatesTraffic
+                            );
+                        }}
+                        listMode="SCROLLVIEW"
+                        placeholder=""
+                        dropDownContainerStyle={{
+                            borderColor: '#5E5E5E',
+                        }}
+                        selectedItemContainerStyle={{
+                            backgroundColor: '#ddd',
+                        }}
+                        selectedItemLabelStyle={{
+                            fontWeight: 'bold',
+                        }}
+                        listItemLabelStyle={{
+                            fontSize: 18,
+                        }}
+                        labelStyle={{
+                            fontSize: 18,
+                        }}
+                        style={styles.trafficInput}
+                    />
+                    <Text style={globalStyles.errorText}>
+                        {formikProps.touched.foodItems &&
+                            formikProps.errors.foodItems &&
+                            formikProps.errors.foodItems.nutritionalValues &&
+                            formikProps.errors.foodItems.nutritionalValues
+                                .saturates &&
+                            formikProps.errors.foodItems.nutritionalValues
+                                .saturates.trafficLight &&
+                            formikProps.errors.foodItems.nutritionalValues
+                                .saturates.trafficLight.guess}
+                    </Text>
                 </View>
             </View>
 
@@ -473,11 +580,11 @@ const FormStep1 = ({
                     <TextInput
                         style={styles.nutritionInput}
                         onChangeText={(input) => {
-                            updateTrafficValue(input, 'sugar', setSugarTraffic);
                             formikProps.setFieldValue(
                                 'foodItems.nutritionalValues.sugar.weight',
                                 input
                             );
+                            updateActualTrafficValue(input, 'sugar');
                         }}
                         value={
                             formikProps.values.foodItems.nutritionalValues.sugar
@@ -487,9 +594,6 @@ const FormStep1 = ({
                     />
                     <Text style={globalStyles.errorText}>
                         {formikProps.touched.foodItems &&
-                            formikProps.touched.foodItems.nutritionalValues &&
-                            formikProps.touched.foodItems.nutritionalValues
-                                .sugar &&
                             formikProps.errors.foodItems &&
                             formikProps.errors.foodItems.nutritionalValues &&
                             formikProps.errors.foodItems.nutritionalValues
@@ -498,18 +602,56 @@ const FormStep1 = ({
                                 .weight}
                     </Text>
                 </View>
-                <View>
+
+                <View style={styles.nutritionValue}>
                     <Text style={styles.inputLabel}>Traffic Light Value</Text>
-                    <View style={styles.trafficLightContainer}>
-                        <MaterialIcons
-                            name="circle"
-                            color={sugarTraffic.color}
-                            size={28}
-                        />
-                        <Text
-                            style={styles.trafficText}
-                        >{` ${sugarTraffic.value}`}</Text>
-                    </View>
+                    <DropDownPicker
+                        open={sugarTrafficOpen}
+                        value={sugarTraffic}
+                        items={trafficItems}
+                        setOpen={setSugarTrafficOpen}
+                        setValue={setSugarTraffic}
+                        setItems={setTrafficItems}
+                        zIndex={2000}
+                        zIndexInverse={8000}
+                        onOpen={() => {
+                            setFatTrafficOpen(false);
+                            setSaturatesTrafficOpen(false);
+                            setSaltTrafficOpen(false);
+                        }}
+                        onChangeValue={(selected) => {
+                            onTrafficChange(selected, 'sugar', setSugarTraffic);
+                        }}
+                        listMode="SCROLLVIEW"
+                        placeholder=""
+                        dropDownContainerStyle={{
+                            borderColor: '#5E5E5E',
+                        }}
+                        selectedItemContainerStyle={{
+                            backgroundColor: '#ddd',
+                        }}
+                        selectedItemLabelStyle={{
+                            fontWeight: 'bold',
+                        }}
+                        listItemLabelStyle={{
+                            fontSize: 18,
+                        }}
+                        labelStyle={{
+                            fontSize: 18,
+                        }}
+                        style={styles.trafficInput}
+                    />
+                    <Text style={globalStyles.errorText}>
+                        {formikProps.touched.foodItems &&
+                            formikProps.errors.foodItems &&
+                            formikProps.errors.foodItems.nutritionalValues &&
+                            formikProps.errors.foodItems.nutritionalValues
+                                .sugar &&
+                            formikProps.errors.foodItems.nutritionalValues.sugar
+                                .trafficLight &&
+                            formikProps.errors.foodItems.nutritionalValues.sugar
+                                .trafficLight.guess}
+                    </Text>
                 </View>
             </View>
 
@@ -519,11 +661,11 @@ const FormStep1 = ({
                     <TextInput
                         style={styles.nutritionInput}
                         onChangeText={(input) => {
-                            updateTrafficValue(input, 'salt', setSaltTraffic);
                             formikProps.setFieldValue(
                                 'foodItems.nutritionalValues.salt.weight',
                                 input
                             );
+                            updateActualTrafficValue(input, 'salt');
                         }}
                         value={
                             formikProps.values.foodItems.nutritionalValues.salt
@@ -533,9 +675,6 @@ const FormStep1 = ({
                     />
                     <Text style={globalStyles.errorText}>
                         {formikProps.touched.foodItems &&
-                            formikProps.touched.foodItems.nutritionalValues &&
-                            formikProps.touched.foodItems.nutritionalValues
-                                .salt &&
                             formikProps.errors.foodItems &&
                             formikProps.errors.foodItems.nutritionalValues &&
                             formikProps.errors.foodItems.nutritionalValues
@@ -544,18 +683,55 @@ const FormStep1 = ({
                                 .weight}
                     </Text>
                 </View>
-                <View>
+                <View style={styles.nutritionValue}>
                     <Text style={styles.inputLabel}>Traffic Light Value</Text>
-                    <View style={styles.trafficLightContainer}>
-                        <MaterialIcons
-                            name="circle"
-                            color={saltTraffic.color}
-                            size={28}
-                        />
-                        <Text
-                            style={styles.trafficText}
-                        >{` ${saltTraffic.value}`}</Text>
-                    </View>
+                    <DropDownPicker
+                        open={saltTrafficOpen}
+                        value={saltTraffic}
+                        items={trafficItems}
+                        setOpen={setSaltTrafficOpen}
+                        setValue={setSaltTraffic}
+                        setItems={setTrafficItems}
+                        zIndex={1000}
+                        zIndexInverse={9000}
+                        onOpen={() => {
+                            setFatTrafficOpen(false);
+                            setSugarTrafficOpen(false);
+                            setSaturatesTrafficOpen(false);
+                        }}
+                        onChangeValue={(selected) => {
+                            onTrafficChange(selected, 'salt', setSaltTraffic);
+                        }}
+                        listMode="SCROLLVIEW"
+                        placeholder=""
+                        dropDownContainerStyle={{
+                            borderColor: '#5E5E5E',
+                        }}
+                        selectedItemContainerStyle={{
+                            backgroundColor: '#ddd',
+                        }}
+                        selectedItemLabelStyle={{
+                            fontWeight: 'bold',
+                        }}
+                        listItemLabelStyle={{
+                            fontSize: 18,
+                        }}
+                        labelStyle={{
+                            fontSize: 18,
+                        }}
+                        style={styles.trafficInput}
+                    />
+                    <Text style={globalStyles.errorText}>
+                        {formikProps.touched.foodItems &&
+                            formikProps.errors.foodItems &&
+                            formikProps.errors.foodItems.nutritionalValues &&
+                            formikProps.errors.foodItems.nutritionalValues
+                                .salt &&
+                            formikProps.errors.foodItems.nutritionalValues.salt
+                                .trafficLight &&
+                            formikProps.errors.foodItems.nutritionalValues.salt
+                                .trafficLight.guess}
+                    </Text>
                 </View>
             </View>
 
@@ -689,12 +865,9 @@ const FormStep2 = ({
                 onOpen={() => setHungryOpen(false)}
                 onChangeValue={onMealTypeChange}
                 listMode="SCROLLVIEW"
-                placeholderStyle={{
-                    color: 'grey',
-                    fontSize: 18,
-                }}
+                placeholder=""
                 dropDownContainerStyle={{
-                    borderColor: '#ddd',
+                    borderColor: '#5E5E5E',
                 }}
                 selectedItemContainerStyle={{
                     backgroundColor: '#ddd',
@@ -708,7 +881,7 @@ const FormStep2 = ({
                 labelStyle={{
                     fontSize: 18,
                 }}
-                style={globalStyles.input}
+                style={styles.dropDown}
             />
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.mealType && formikProps.errors.mealType}
@@ -749,12 +922,9 @@ const FormStep2 = ({
                 }}
                 onChangeValue={onPhysicalChange}
                 listMode="SCROLLVIEW"
-                placeholderStyle={{
-                    color: 'grey',
-                    fontSize: 18,
-                }}
+                placeholder=""
                 dropDownContainerStyle={{
-                    borderColor: '#ddd',
+                    borderColor: '#5E5E5E',
                 }}
                 selectedItemContainerStyle={{
                     backgroundColor: '#ddd',
@@ -768,7 +938,7 @@ const FormStep2 = ({
                 labelStyle={{
                     fontSize: 18,
                 }}
-                style={globalStyles.input}
+                style={styles.dropDown}
             />
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.physical && formikProps.errors.physical}
@@ -795,12 +965,9 @@ const FormStep2 = ({
                 onOpen={() => setMealTypeOpen(false)}
                 onChangeValue={onHungryChange}
                 listMode="SCROLLVIEW"
-                placeholderStyle={{
-                    color: 'grey',
-                    fontSize: 18,
-                }}
+                placeholder=""
                 dropDownContainerStyle={{
-                    borderColor: '#ddd',
+                    borderColor: '#5E5E5E',
                 }}
                 selectedItemContainerStyle={{
                     backgroundColor: '#ddd',
@@ -814,7 +981,7 @@ const FormStep2 = ({
                 labelStyle={{
                     fontSize: 18,
                 }}
-                style={globalStyles.input}
+                style={styles.dropDown}
             />
             <Text style={globalStyles.errorText}>
                 {formikProps.touched.hungry && formikProps.errors.hungry}
@@ -874,15 +1041,23 @@ const styles = StyleSheet.create({
         color: '#5C5C5C',
     },
     nutritionInput: {
-        borderWidth: 1,
-        borderColor: '#ddd',
+        borderBottomWidth: 2,
+        borderColor: '#5E5E5E',
         padding: 10,
         fontSize: 18,
-        borderRadius: 6,
         width: '100%',
         color: 'black',
-        backgroundColor: 'white',
         marginTop: 5,
+    },
+    trafficInput: {
+        borderBottomWidth: 2,
+        borderLeftWidth: 0,
+        borderTopWidth: 0,
+        borderRightWidth: 0,
+        marginTop: 5,
+        borderRadius: 0,
+        borderColor: '#5E5E5E',
+        backgroundColor: '#F2F2F2',
     },
     nutritionContainer: {
         flexDirection: 'row',
@@ -899,5 +1074,15 @@ const styles = StyleSheet.create({
     trafficText: {
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    dropDown: {
+        borderBottomWidth: 2,
+        borderLeftWidth: 0,
+        borderTopWidth: 0,
+        borderRightWidth: 0,
+        marginTop: 5,
+        borderRadius: 0,
+        borderColor: '#5E5E5E',
+        backgroundColor: '#F2F2F2',
     },
 });
