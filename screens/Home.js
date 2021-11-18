@@ -12,11 +12,10 @@ import FlatButton from '../shared/Button';
 import { MaterialIcons } from '@expo/vector-icons';
 import { globalStyles } from '../styles/global';
 import { useFocusEffect } from '@react-navigation/core';
-import EntryForm from './EntryForm';
 import axios from 'axios';
 import { BASE_URL } from '@env';
 import { AuthContext } from '../providers/AuthProvider';
-import EntryForm2 from './EntryForm2';
+import EntryForm from './EntryForm';
 
 const Home = ({ navigation }) => {
     const { user } = useContext(AuthContext);
@@ -81,7 +80,7 @@ const Home = ({ navigation }) => {
                             ...globalStyles.modalClose,
                         }}
                     />
-                    <EntryForm2 setModalOpen={setModalOpen} />
+                    <EntryForm setModalOpen={setModalOpen} />
                 </View>
             </Modal>
 
@@ -119,9 +118,10 @@ const Home = ({ navigation }) => {
                 onPress={() => setModalOpen(true)}
                 style={globalStyles.modalToggle}
             />
-
+            <Text style={globalStyles.titleText}>Recent Entries</Text>
             <FlatList
                 data={entrys}
+                style={{ marginTop: 10 }}
                 renderItem={({ item }) => {
                     return (
                         <TouchableOpacity

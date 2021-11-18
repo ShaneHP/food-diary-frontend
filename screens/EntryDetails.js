@@ -111,6 +111,7 @@ const EntryDetails = ({ route }) => {
                 text="Update Entry"
                 onPress={() => setFormOpen(true)}
                 backgroundColor="blue"
+                textColor="white"
             />
         </View>
     );

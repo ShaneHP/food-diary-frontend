@@ -6,9 +6,9 @@ export const globalStyles = StyleSheet.create({
         padding: 20,
     },
     titleText: {
-        fontFamily: 'nunito-bold',
         fontSize: 18,
         color: '#333',
+        fontWeight: 'bold',
     },
     paragraph: {
         marginVertical: 8,
@@ -35,7 +35,6 @@ export const globalStyles = StyleSheet.create({
         textAlign: 'center',
     },
     smallText: {
-        fontFamily: 'nunito-regular',
         fontSize: 15,
         color: '#333',
     },
