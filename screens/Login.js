@@ -19,7 +19,7 @@ const loginSchema = yup.object({
 
 const Login = ({ navigation }) => {
     const { login } = useContext(AuthContext);
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState({ email: '', password: '' });
 
     const errorCheckEmail = (formikProps) => {
         if (formikProps.touched.email && formikProps.errors.email) {
