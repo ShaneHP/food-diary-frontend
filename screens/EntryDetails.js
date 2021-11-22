@@ -27,6 +27,7 @@ const EntryDetails = ({ route }) => {
     const [diaryEntry, setDiaryEntry] = useState({});
     const [formOpen, setFormOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [date, setDate] = useState(null);
 
     useEffect(() => {
         let isActive = true;
@@ -38,6 +39,7 @@ const EntryDetails = ({ route }) => {
             .then((res) => {
                 if (isActive) {
                     setDiaryEntry(res.data);
+                    setDate(new Date(res.data.date));
                     setLoading(false);
                 }
             })
@@ -88,7 +90,7 @@ const EntryDetails = ({ route }) => {
             <View style={styles.inlineContainer}>
                 <View>
                     <Text style={{ fontSize: 26, fontWeight: 'bold' }}>
-                        {diaryEntry.date}
+                        {date && date.toDateString()}
                     </Text>
                     <Text style={{ fontSize: 18 }}>{diaryEntry.time}</Text>
                 </View>
