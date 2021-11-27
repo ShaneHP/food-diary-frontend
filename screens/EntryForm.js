@@ -92,7 +92,7 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
     );
     const [time, setTime] = useState(
         initialValues
-            ? new Date(`${initialValues.date}, ${initialValues.time}`)
+            ? new Date(`January 1, 2000 ${initialValues.time}`)
             : new Date()
     );
     const [mealType, setMealType] = useState(
@@ -187,39 +187,81 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
                 style={globalStyles.content}
                 validationSchema={entrySchema}
                 initialValues={
-                    initialValues || {
-                        date: date.toDateString(),
-                        time: time.toLocaleTimeString().substr(0, 5),
-                        mood: '',
-                        activity: '',
-                        hungry: '',
-                        location: '',
-                        whoWith: '',
-                        mealType: '',
-                        physicalFeeling: '',
-                        foodItems: {
-                            name: '',
-                            weight: '',
-                            nutritionalValues: {
-                                fat: {
-                                    weight: '',
-                                    trafficLight: fatTraffic,
-                                },
-                                saturates: {
-                                    weight: '',
-                                    trafficLight: saturatesTraffic,
-                                },
-                                sugar: {
-                                    weight: '',
-                                    trafficLight: sugarTraffic,
-                                },
-                                salt: {
-                                    weight: '',
-                                    trafficLight: saltTraffic,
-                                },
-                            },
-                        },
-                    }
+                    initialValues
+                        ? {
+                              ...initialValues,
+                              foodItems: {
+                                  name: initialValues.foodItems.name,
+                                  weight: initialValues.foodItems.weight.toString(),
+                                  nutritionalValues: {
+                                      fat: {
+                                          weight: initialValues.foodItems.nutritionalValues.fat.weight.toString(),
+                                          trafficLight: {
+                                              ...initialValues.foodItems
+                                                  .nutritionalValues.fat
+                                                  .trafficLight,
+                                          },
+                                      },
+                                      saturates: {
+                                          weight: initialValues.foodItems.nutritionalValues.saturates.weight.toString(),
+                                          trafficLight: {
+                                              ...initialValues.foodItems
+                                                  .nutritionalValues.saturates
+                                                  .trafficLight,
+                                          },
+                                      },
+                                      sugar: {
+                                          weight: initialValues.foodItems.nutritionalValues.sugar.weight.toString(),
+                                          trafficLight: {
+                                              ...initialValues.foodItems
+                                                  .nutritionalValues.sugar
+                                                  .trafficLight,
+                                          },
+                                      },
+                                      salt: {
+                                          weight: initialValues.foodItems.nutritionalValues.salt.weight.toString(),
+                                          trafficLight: {
+                                              ...initialValues.foodItems
+                                                  .nutritionalValues.salt
+                                                  .trafficLight,
+                                          },
+                                      },
+                                  },
+                              },
+                          }
+                        : {
+                              date: date.toDateString(),
+                              time: time.toLocaleTimeString().substr(0, 5),
+                              mood: '',
+                              activity: '',
+                              hungry: '',
+                              location: '',
+                              whoWith: '',
+                              mealType: '',
+                              physicalFeeling: '',
+                              foodItems: {
+                                  name: '',
+                                  weight: '',
+                                  nutritionalValues: {
+                                      fat: {
+                                          weight: '',
+                                          trafficLight: fatTraffic,
+                                      },
+                                      saturates: {
+                                          weight: '',
+                                          trafficLight: saturatesTraffic,
+                                      },
+                                      sugar: {
+                                          weight: '',
+                                          trafficLight: sugarTraffic,
+                                      },
+                                      salt: {
+                                          weight: '',
+                                          trafficLight: saltTraffic,
+                                      },
+                                  },
+                              },
+                          }
                 }
                 onSubmit={onSubmit}
             >
