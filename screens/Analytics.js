@@ -4,6 +4,7 @@ import { VictoryPie, VictoryTheme, VictoryLegend } from 'victory-native';
 import { AuthContext } from '../providers/AuthProvider';
 import Card from '../shared/Card';
 import TrafficBarChart from '../components/TrafficBarChart';
+import DailyRecommendedChart from '../components/DailyRecommendedChart';
 import axios from 'axios';
 import { BASE_URL } from '@env';
 import { useFocusEffect } from '@react-navigation/core';
@@ -17,10 +18,12 @@ const Analytics = () => {
     const [saturatesTraffic, setSaturatesTraffic] = useState({});
     const [sugarTraffic, setSugarTraffic] = useState({});
     const [saltTraffic, setSaltTraffic] = useState({});
+    const [dailyNutrients, setDailyNutrients] = useState({});
 
     useFocusEffect(
         useCallback(() => {
             let isActive = true;
+            setLoading(true);
 
             async function fetchData() {
                 const urls = [
@@ -29,6 +32,7 @@ const Analytics = () => {
                     `${BASE_URL}/analytics/trafficChart?userId=${user._id}&nutrient=saturates`,
                     `${BASE_URL}/analytics/trafficChart?userId=${user._id}&nutrient=sugar`,
                     `${BASE_URL}/analytics/trafficChart?userId=${user._id}&nutrient=salt`,
+                    `${BASE_URL}/analytics/dailyNutrients?userId=${user._id}`,
                 ];
 
                 const headers = { Authorization: `Bearer ${user.jwt}` };
@@ -40,6 +44,7 @@ const Analytics = () => {
                         saturatesTrafficRes,
                         sugarTrafficRes,
                         saltTrafficRes,
+                        dailyNutrientsRes,
                     ] = await Promise.all(
                         urls.map((url) => {
                             return axios.get(url, {
@@ -54,6 +59,7 @@ const Analytics = () => {
                         setSaturatesTraffic(saturatesTrafficRes.data);
                         setSugarTraffic(sugarTrafficRes.data);
                         setSaltTraffic(saltTrafficRes.data);
+                        setDailyNutrients(dailyNutrientsRes.data);
                         setLoading(false);
                     }
                 } catch (error) {
@@ -141,6 +147,12 @@ const Analytics = () => {
                     Daily Analytics
                 </Text>
             </View>
+            <Card customStyle={{ marginHorizontal: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+                    Daily recommended intake vs. your intake
+                </Text>
+                <DailyRecommendedChart dailyNutrients={dailyNutrients} />
+            </Card>
             <Card customStyle={{ marginHorizontal: 10 }}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
                     Fat values of foods eaten today
