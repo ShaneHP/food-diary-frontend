@@ -151,7 +151,13 @@ const Analytics = () => {
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
                     Daily recommended intake vs. your intake
                 </Text>
-                <DailyRecommendedChart dailyNutrients={dailyNutrients} />
+                {dailyNutrients.totalNutrients ? (
+                    <DailyRecommendedChart dailyNutrients={dailyNutrients} />
+                ) : (
+                    <View style={{ marginVertical: 20 }}>
+                        <Text>You need to make at least one entry today</Text>
+                    </View>
+                )}
             </Card>
             <Card customStyle={{ marginHorizontal: 10 }}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
