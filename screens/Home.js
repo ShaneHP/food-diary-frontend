@@ -112,11 +112,13 @@ const Home = ({ navigation }) => {
                 </View>
             </Modal>
 
-            <MaterialIcons
-                name="add"
-                size={30}
+            <Text style={globalStyles.titleText}>Have you just eaten?</Text>
+            <FlatButton
+                text="Add Entry"
                 onPress={() => setModalOpen(true)}
-                style={globalStyles.modalToggle}
+                textColor="white"
+                backgroundColor="blue"
+                style={{ marginVertical: 17 }}
             />
             <Text style={globalStyles.titleText}>Recent Entries</Text>
             <FlatList
@@ -129,7 +131,12 @@ const Home = ({ navigation }) => {
                                 navigation.navigate('EntryDetails', item._id)
                             }
                         >
-                            <Card>
+                            <Card
+                                customStyle={{
+                                    borderTopWidth: 5,
+                                    borderTopColor: '#74A981',
+                                }}
+                            >
                                 <View style={styles.cardContainer}>
                                     <View style={styles.textContainer}>
                                         <Text style={globalStyles.titleText}>
@@ -137,6 +144,9 @@ const Home = ({ navigation }) => {
                                         </Text>
                                         <Text style={globalStyles.smallText}>
                                             {item.foodItems.name}
+                                        </Text>
+                                        <Text style={styles.linkText}>
+                                            View/Edit
                                         </Text>
                                     </View>
                                     <MaterialIcons
@@ -196,5 +206,10 @@ const styles = StyleSheet.create({
     textContainer: {
         display: 'flex',
         flexDirection: 'column',
+    },
+    linkText: {
+        color: 'blue',
+        marginTop: 10,
+        fontWeight: 'bold',
     },
 });
