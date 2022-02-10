@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import HomeStack from './HomeStack';
-import Profile from '../screens/Profile';
+import Analytics from '../screens/Analytics';
 
 const Tabs = createBottomTabNavigator();
 
@@ -15,8 +15,8 @@ const AppTabs = () => {
 
                     if (route.name === 'HomeStack') {
                         iconName = 'home-outline';
-                    } else if (route.name === 'Profile') {
-                        iconName = 'person-outline';
+                    } else if (route.name === 'Analytics') {
+                        iconName = 'bar-chart-outline';
                     }
 
                     // You can return any component that you like here!
@@ -36,7 +36,7 @@ const AppTabs = () => {
                     title: 'Home',
                 }}
             />
-            <Tabs.Screen name="Profile" component={Profile} />
+            <Tabs.Screen name="Analytics" component={Analytics} />
         </Tabs.Navigator>
     );
 };

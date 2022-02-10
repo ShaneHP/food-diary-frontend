@@ -71,25 +71,41 @@ const entrySchema = yup.object({
             fat: yup.object({
                 weight: yup.string().required('Fat is required'),
                 trafficLight: yup.object({
-                    guess: yup.string().required('Traffic light is required'),
+                    guess: yup.object({
+                        value: yup
+                            .string()
+                            .required('Traffic light is required'),
+                    }),
                 }),
             }),
             saturates: yup.object({
                 weight: yup.string().required('Saturates is required'),
                 trafficLight: yup.object({
-                    guess: yup.string().required('Traffic light is required'),
+                    guess: yup.object({
+                        value: yup
+                            .string()
+                            .required('Traffic light is required'),
+                    }),
                 }),
             }),
             sugar: yup.object({
                 weight: yup.string().required('Sugar is required'),
                 trafficLight: yup.object({
-                    guess: yup.string().required('Traffic light is required'),
+                    guess: yup.object({
+                        value: yup
+                            .string()
+                            .required('Traffic light is required'),
+                    }),
                 }),
             }),
             salt: yup.object({
                 weight: yup.string().required('Salt is required'),
                 trafficLight: yup.object({
-                    guess: yup.string().required('Traffic light is required'),
+                    guess: yup.object({
+                        value: yup
+                            .string()
+                            .required('Traffic light is required'),
+                    }),
                 }),
             }),
         }),
@@ -116,10 +132,30 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
     const [physicalFeeling, setPhysicalFeeling] = useState(
         initialValues ? initialValues.physicalFeeling : null
     );
-    const [fatTraffic, setFatTraffic] = useState('');
-    const [saturatesTraffic, setSaturatesTraffic] = useState('');
-    const [sugarTraffic, setSugarTraffic] = useState('');
-    const [saltTraffic, setSaltTraffic] = useState('');
+    const [fatTraffic, setFatTraffic] = useState(
+        initialValues
+            ? initialValues.foodItems.nutritionalValues.fat.trafficLight.guess
+                  .value
+            : ''
+    );
+    const [saturatesTraffic, setSaturatesTraffic] = useState(
+        initialValues
+            ? initialValues.foodItems.nutritionalValues.saturates.trafficLight
+                  .guess.value
+            : ''
+    );
+    const [sugarTraffic, setSugarTraffic] = useState(
+        initialValues
+            ? initialValues.foodItems.nutritionalValues.sugar.trafficLight.guess
+                  .value
+            : ''
+    );
+    const [saltTraffic, setSaltTraffic] = useState(
+        initialValues
+            ? initialValues.foodItems.nutritionalValues.salt.trafficLight.guess
+                  .value
+            : ''
+    );
     const [step, setStep] = useState(1);
 
     const onSubmit = (values, actions) => {
@@ -183,51 +219,117 @@ const EntryForm = ({ setModalOpen, initialValues, isUpdate = false }) => {
                 style={globalStyles.content}
                 validationSchema={entrySchema}
                 initialValues={
-                    initialValues || {
-                        date: date.toDateString(),
-                        time: time.toLocaleTimeString().substr(0, 5),
-                        mood: '',
-                        activity: '',
-                        hungry: '',
-                        location: '',
-                        whoWith: '',
-                        mealType: '',
-                        physicalFeeling: '',
-                        foodItems: {
-                            name: '',
-                            weight: '',
-                            nutritionalValues: {
-                                fat: {
-                                    weight: '',
-                                    trafficLight: {
-                                        guess: '',
-                                        actual: '',
-                                    },
-                                },
-                                saturates: {
-                                    weight: '',
-                                    trafficLight: {
-                                        guess: '',
-                                        actual: '',
-                                    },
-                                },
-                                sugar: {
-                                    weight: '',
-                                    trafficLight: {
-                                        guess: '',
-                                        actual: '',
-                                    },
-                                },
-                                salt: {
-                                    weight: '',
-                                    trafficLight: {
-                                        guess: '',
-                                        actual: '',
-                                    },
-                                },
-                            },
-                        },
-                    }
+                    initialValues
+                        ? {
+                              ...initialValues,
+                              foodItems: {
+                                  name: initialValues.foodItems.name,
+                                  weight: initialValues.foodItems.weight.toString(),
+                                  nutritionalValues: {
+                                      fat: {
+                                          weight: initialValues.foodItems.nutritionalValues.fat.weight.toString(),
+                                          trafficLight: {
+                                              ...initialValues.foodItems
+                                                  .nutritionalValues.fat
+                                                  .trafficLight,
+                                          },
+                                      },
+                                      saturates: {
+                                          weight: initialValues.foodItems.nutritionalValues.saturates.weight.toString(),
+                                          trafficLight: {
+                                              ...initialValues.foodItems
+                                                  .nutritionalValues.saturates
+                                                  .trafficLight,
+                                          },
+                                      },
+                                      sugar: {
+                                          weight: initialValues.foodItems.nutritionalValues.sugar.weight.toString(),
+                                          trafficLight: {
+                                              ...initialValues.foodItems
+                                                  .nutritionalValues.sugar
+                                                  .trafficLight,
+                                          },
+                                      },
+                                      salt: {
+                                          weight: initialValues.foodItems.nutritionalValues.salt.weight.toString(),
+                                          trafficLight: {
+                                              ...initialValues.foodItems
+                                                  .nutritionalValues.salt
+                                                  .trafficLight,
+                                          },
+                                      },
+                                  },
+                              },
+                          }
+                        : {
+                              date: date.toDateString(),
+                              time: time.toLocaleTimeString().substr(0, 5),
+                              mood: '',
+                              activity: '',
+                              hungry: '',
+                              location: '',
+                              whoWith: '',
+                              mealType: '',
+                              physicalFeeling: '',
+                              foodItems: {
+                                  name: '',
+                                  weight: '',
+                                  nutritionalValues: {
+                                      fat: {
+                                          weight: '',
+                                          trafficLight: {
+                                              guess: {
+                                                  value: '',
+                                                  color: '',
+                                              },
+                                              actual: {
+                                                  value: '',
+                                                  color: '',
+                                              },
+                                          },
+                                      },
+                                      saturates: {
+                                          weight: '',
+                                          trafficLight: {
+                                              guess: {
+                                                  value: '',
+                                                  color: '',
+                                              },
+                                              actual: {
+                                                  value: '',
+                                                  color: '',
+                                              },
+                                          },
+                                      },
+                                      sugar: {
+                                          weight: '',
+                                          trafficLight: {
+                                              guess: {
+                                                  value: '',
+                                                  color: '',
+                                              },
+                                              actual: {
+                                                  value: '',
+                                                  color: '',
+                                              },
+                                          },
+                                      },
+                                      salt: {
+                                          weight: '',
+                                          trafficLight: {
+                                              guess: {
+                                                  value: '',
+                                                  color: '',
+                                              },
+                                              actual: {
+                                                  value: '',
+                                                  color: '',
+                                              },
+                                          },
+                                      },
+                                  },
+                              },
+                          }
                 }
                 onSubmit={onSubmit}
             >
@@ -315,19 +417,27 @@ const FormStep1 = ({
 
     const onTrafficChange = (selected, nutrient, setTraffic) => {
         const path = `foodItems.nutritionalValues.${nutrient}.trafficLight.guess`;
+
+        if (selected == 'Green') {
+            formikProps.setFieldValue(path, trafficColors.Green);
+        } else if (selected == 'Amber') {
+            formikProps.setFieldValue(path, trafficColors.Amber);
+        } else {
+            formikProps.setFieldValue(path, trafficColors.Red);
+        }
+
         setTraffic(selected);
-        formikProps.setFieldValue(path, selected);
     };
 
     const updateActualTrafficValue = (input, nutrient) => {
         const path = `foodItems.nutritionalValues.${nutrient}.trafficLight.actual`;
 
         if (input <= trafficRanges[nutrient].green) {
-            formikProps.setFieldValue(path, 'Green');
+            formikProps.setFieldValue(path, trafficColors.Green);
         } else if (input <= trafficRanges[nutrient].amber) {
-            formikProps.setFieldValue(path, 'Amber');
+            formikProps.setFieldValue(path, trafficColors.Amber);
         } else {
-            formikProps.setFieldValue(path, 'Red');
+            formikProps.setFieldValue(path, trafficColors.Red);
         }
     };
 
@@ -484,7 +594,9 @@ const FormStep1 = ({
                             formikProps.errors.foodItems.nutritionalValues.fat
                                 .trafficLight &&
                             formikProps.errors.foodItems.nutritionalValues.fat
-                                .trafficLight.guess}
+                                .trafficLight.guess &&
+                            formikProps.errors.foodItems.nutritionalValues.salt
+                                .trafficLight.guess.value}
                     </Text>
                 </View>
             </View>
@@ -569,7 +681,9 @@ const FormStep1 = ({
                             formikProps.errors.foodItems.nutritionalValues
                                 .saturates.trafficLight &&
                             formikProps.errors.foodItems.nutritionalValues
-                                .saturates.trafficLight.guess}
+                                .saturates.trafficLight.guess &&
+                            formikProps.errors.foodItems.nutritionalValues.salt
+                                .trafficLight.guess.value}
                     </Text>
                 </View>
             </View>
@@ -650,7 +764,9 @@ const FormStep1 = ({
                             formikProps.errors.foodItems.nutritionalValues.sugar
                                 .trafficLight &&
                             formikProps.errors.foodItems.nutritionalValues.sugar
-                                .trafficLight.guess}
+                                .trafficLight.guess &&
+                            formikProps.errors.foodItems.nutritionalValues.salt
+                                .trafficLight.guess.value}
                     </Text>
                 </View>
             </View>
@@ -730,7 +846,9 @@ const FormStep1 = ({
                             formikProps.errors.foodItems.nutritionalValues.salt
                                 .trafficLight &&
                             formikProps.errors.foodItems.nutritionalValues.salt
-                                .trafficLight.guess}
+                                .trafficLight.guess &&
+                            formikProps.errors.foodItems.nutritionalValues.salt
+                                .trafficLight.guess.value}
                     </Text>
                 </View>
             </View>
