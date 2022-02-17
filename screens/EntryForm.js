@@ -519,7 +519,7 @@ const FormStep1 = ({
             </View>
 
             <View style={styles.nutritionContainer}>
-                <View style={styles.nutritionValue}>
+                <View style={{ width: '40%' }}>
                     <Text style={styles.inputLabel}>Fat (g)</Text>
                     <TextInput
                         style={styles.nutritionInput}
@@ -547,7 +547,11 @@ const FormStep1 = ({
                     </Text>
                 </View>
 
-                <View style={styles.nutritionValue}>
+                <View
+                    style={{
+                        ...styles.nutritionValue,
+                    }}
+                >
                     <Text style={styles.inputLabel}>Traffic Light Value</Text>
                     <DropDownPicker
                         open={fatTrafficOpen}
@@ -602,7 +606,7 @@ const FormStep1 = ({
             </View>
 
             <View style={styles.nutritionContainer}>
-                <View style={styles.nutritionValue}>
+                <View style={{ width: '40%' }}>
                     <Text style={styles.inputLabel}>Saturates (g)</Text>
                     <TextInput
                         style={styles.nutritionInput}
@@ -630,7 +634,11 @@ const FormStep1 = ({
                     </Text>
                 </View>
 
-                <View style={styles.nutritionValue}>
+                <View
+                    style={{
+                        ...styles.nutritionValue,
+                    }}
+                >
                     <Text style={styles.inputLabel}>Traffic Light Value</Text>
                     <DropDownPicker
                         open={saturatesTrafficOpen}
@@ -689,7 +697,7 @@ const FormStep1 = ({
             </View>
 
             <View style={styles.nutritionContainer}>
-                <View style={styles.nutritionValue}>
+                <View style={{ width: '40%' }}>
                     <Text style={styles.inputLabel}>Sugar (g)</Text>
                     <TextInput
                         style={styles.nutritionInput}
@@ -717,7 +725,12 @@ const FormStep1 = ({
                     </Text>
                 </View>
 
-                <View style={styles.nutritionValue}>
+                <View
+                    style={{
+                        ...styles.nutritionValue,
+                        ...styles.trafficContainer,
+                    }}
+                >
                     <Text style={styles.inputLabel}>Traffic Light Value</Text>
                     <DropDownPicker
                         open={sugarTrafficOpen}
@@ -772,7 +785,7 @@ const FormStep1 = ({
             </View>
 
             <View style={styles.nutritionContainer}>
-                <View style={styles.nutritionValue}>
+                <View style={{ width: '40%' }}>
                     <Text style={styles.inputLabel}>Salt (g)</Text>
                     <TextInput
                         style={styles.nutritionInput}
@@ -799,7 +812,12 @@ const FormStep1 = ({
                                 .weight}
                     </Text>
                 </View>
-                <View style={styles.nutritionValue}>
+                <View
+                    style={{
+                        ...styles.nutritionValue,
+                        ...styles.trafficContainer,
+                    }}
+                >
                     <Text style={styles.inputLabel}>Traffic Light Value</Text>
                     <DropDownPicker
                         open={saltTrafficOpen}
@@ -1116,7 +1134,7 @@ const FormStep2 = ({
             <View
                 style={{
                     flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-around',
                 }}
             >
                 <FlatButton
@@ -1182,7 +1200,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     nutritionValue: {
-        width: '40%',
+        width: '50%',
     },
     trafficLightContainer: {
         flexDirection: 'row',
@@ -1203,4 +1221,7 @@ const styles = StyleSheet.create({
         borderColor: '#5E5E5E',
         backgroundColor: '#F2F2F2',
     },
+    // trafficContainer: {
+    //     marginLeft: 25,
+    // },
 });
