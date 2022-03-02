@@ -15,12 +15,6 @@ export const globalStyles = StyleSheet.create({
         lineHeight: 20,
     },
     input: {
-        // borderBottomWidth: 2,
-        // borderColor: '#5E5E5E',
-        // padding: 10,
-        // fontSize: 18,
-        // color: 'black',
-        // marginTop: 5,
         borderWidth: 1,
         borderColor: '#ddd',
         padding: 10,

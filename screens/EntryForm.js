@@ -1217,7 +1217,4 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         backgroundColor: 'white',
     },
-    // trafficContainer: {
-    //     marginLeft: 25,
-    // },
 });
